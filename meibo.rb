@@ -13,6 +13,12 @@ get '/' do
     haml :index
 end
 
+get '/students.json' do
+    content_type :json, :charset => 'utf-8'
+    students = Student.all
+    students.to_json
+end
+
 post '/new' do
     student = Student.new
     student.id = params[:id]
