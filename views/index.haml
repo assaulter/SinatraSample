@@ -1,0 +1,29 @@
+!!!
+%html
+    %head
+        %body
+            %table
+                %tr
+                    %th 学籍番号
+                    %th 氏名
+                    %th E-mail
+                - @students.each do |student|
+                    %tr
+                        %td= student.id
+                        %td= student.name
+                        %td= student.email
+                        %form{action: 'delete', method: 'post'}
+                            %td
+                                %input{type: 'submit', value: '削除'}
+                            %input{type: 'hidden', name: 'id', value: student.id}
+                            %input{type: 'hidden', name: '_method', value: 'delete'}
+                %form{action: 'new', method: 'post'}
+                    %tr
+                        %td
+                            %input{type: 'text', name: 'id'}
+                        %td
+                            %input{type: 'text', name: 'name'}
+                        %td
+                            %input{type: 'text', name: 'email'}
+                        %td
+                            %input{type: 'submit', value: '登録'}
