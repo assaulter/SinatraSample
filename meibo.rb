@@ -22,14 +22,13 @@ get '/students.json' do
 end
 
 get '/title' do
-    url = 'http://www.yahoo.co.jp/'
-    charset = nil
-    html = open(url) do |f|
-        charset = f.charset
-        f.read
-    end
+    url = 'http://jpdirect.jp/system/'
+    html = open(url).read
 
-    doc = Nokogiri::HTML.parse(html, nil, charset)
+    doc = Nokogiri::HTML(html, url)
+    doc.css('table.tbl-stripe').each do |node|
+        p node.css('td').text
+    end
 end
 
 post '/new' do
