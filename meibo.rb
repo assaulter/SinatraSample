@@ -1,6 +1,8 @@
 # coding:utf-8
 require 'active_record'
 require 'sinatra'
+require 'open-uri'
+require 'nokogiri'
 
 ActiveRecord::Base.configurations = YAML.load_file('database.yml')
 ActiveRecord::Base.establish_connection('development')
@@ -17,6 +19,17 @@ get '/students.json' do
     content_type :json, :charset => 'utf-8'
     students = Student.all
     students.to_json
+end
+
+get '/title' do
+    url = 'http://www.yahoo.co.jp/'
+    charset = nil
+    html = open(url) do |f|
+        charset = f.charset
+        f.read
+    end
+
+    doc = Nokogiri::HTML.parse(html, nil, charset)
 end
 
 post '/new' do
