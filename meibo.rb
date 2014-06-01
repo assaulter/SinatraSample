@@ -5,7 +5,7 @@ require 'open-uri'
 require 'nokogiri'
 
 ActiveRecord::Base.configurations = YAML.load_file('database.yml')
-ActiveRecord::Base.establish_connection('development')
+ActiveRecord::Base.establish_connection(:development)
 
 class Student < ActiveRecord::Base
 end
@@ -27,7 +27,10 @@ get '/title' do
 
     doc = Nokogiri::HTML(html, url)
     doc.css('table.tbl-stripe').each do |node|
-        p node.css('td').text
+        node.css('td').each_with_index do |item, index|
+            p "日:#{item.text}" if index%3 == 0
+            p "時間:#{item.text}" if index%3 == 2
+        end
     end
 end
 
