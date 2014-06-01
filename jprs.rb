@@ -36,14 +36,29 @@ def exec_save(date, time)
   start_datetime = date_str + DateTime.strptime(time[0], '%H:%M').strftime('%H:%M')
   end_datetime = date_str + DateTime.strptime(time[1], '%H:%M').strftime('%H:%M')
 
+  is_updated = false
+
   begin
     target = Maintenance.find(date_str)  
-    target.update_attribute(:start_datetime, start_datetime) unless target.start_datetime == start_datetime
-    target.update_attribute(:end_datetime, end_datetime) unless target.end_datetime == end_datetime
+    unless target.start_datetime == start_datetime
+      target.update_attribute(:start_datetime, start_datetime) 
+      is_updated = true
+    end
+    unless target.end_datetime == end_datetime
+      target.update_attribute(:end_datetime, end_datetime)
+      is_updated = true
+    end
   rescue Exception => e
     #見つからない場合はエクセプションを吐く TODO: このタイミングでメール投げていいんじゃないかな
     add_maintenance(date_str, start_datetime, end_datetime)
+    is_updated = true
   end
+
+  exec_notification if is_updated
+end
+
+def exec_notification
+  system("bundle exec terminal-notifier -title 'JPRS' -message 'JPRS has update!!'")
 end
 
 def add_maintenance(date, start_datetime, end_datetime)
